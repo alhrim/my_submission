@@ -7,6 +7,22 @@ output:
     theme: cayman
     highlight: github
 ---
+```{r setup, include=FALSE}
+# define knitr options
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+
+# set any missing NAs in table to blank
+options(knitr.kable.NA='')
+
+# load R packages
+library(fivethirtyeight)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(ggthemes)
+```
 
 ## ¿Qué es la Citometría de Flujo?
 
@@ -31,54 +47,94 @@ La citometría de flujo se basa en la interacción de células o partículas con
 * **1.Preparación de la Muestra**:
 Las células o partículas a analizar se suspenden en un fluido. Estas células pueden estar previamente marcadas con anticuerpos específicos conjugados a fluorocromos, que se unirán a moléculas específicas presentes en la superficie o en el interior de las células.
 
-* **Inyección de la Muestra**:
+* **2.Inyección de la Muestra**:
 La suspensión celular es inyectada en el citómetro de flujo, donde las células fluyen individualmente a través de un canal estrecho. Este flujo es laminar y ordenado, permitiendo que las células pasen una por una frente al haz de láser.
 
-* **Interacción con el Láser**:
+* **3.Interacción con el Láser**:
 Cada célula que pasa por el láser dispersa la luz en diferentes ángulos (dispersión hacia adelante y lateral). Además, si la célula ha sido marcada con fluorocromos, estos se excitan y emiten luz a una longitud de onda específica.
 
 ![Ilustración de la citometría de flujo](images/FC_1.png)
-<div style="text-align: center;">
-  <img src="images/FC_1.png" alt="Ilustración de la citometría de flujo" width="70%">
-</div>
 
-Detección y Recopilación de Datos:
-Los detectores captan tanto la luz dispersa como la fluorescencia emitida por las células. La dispersión hacia adelante (FSC) proporciona información sobre el tamaño celular, mientras que la dispersión lateral (SSC) está relacionada con la complejidad interna o granularidad de la célula. Los diferentes fluorocromos emiten fluorescencia en longitudes de onda específicas, y sus señales son recogidas por detectores individuales.
 
-Análisis de Datos:
-Las señales detectadas son convertidas en impulsos eléctricos y posteriormente digitalizadas. Estos datos se procesan para generar gráficos como histogramas o diagramas de puntos, que permiten la visualización y análisis de las diferentes poblaciones celulares en función de los parámetros medidos.
+* **4.Detección y Recopilación de Datos**: Los detectores captan tanto la luz dispersa como la fluorescencia emitida por las células. La dispersión hacia adelante (FSC) proporciona información sobre el tamaño celular, mientras que la dispersión lateral (SSC) está relacionada con la complejidad interna o granularidad de la célula. Los diferentes fluorocromos emiten fluorescencia en longitudes de onda específicas, y sus señales son recogidas por detectores individuales.
 
-Interpretación:
+* **5.Análisis de Datos**: Las señales detectadas son convertidas en impulsos eléctricos y posteriormente digitalizadas. Estos datos se procesan para generar gráficos como histogramas o diagramas de puntos, que permiten la visualización y análisis de las diferentes poblaciones celulares en función de los parámetros medidos. Uno de los cálculos matemáticos utilizados es el de la media de fluorescencia (Mean Fluorescence Intensity, MFI), que se emplea para cuantificar la expresión de marcadores específicos en una población celular. Esta se calcula como:
+
+$$ MFI= 1/N  \sum_{i=1}^{N} F_i $$
+Donde:
+  + 𝑁 es el número total de eventos (células) analizados.
+  + $𝐹_i$ es la intensidad de fluorescencia del evento 
+
+## **Interpretación**
+
 Los resultados obtenidos pueden ser interpretados para entender la composición de la muestra, la expresión de moléculas específicas, y otros aspectos relevantes según el experimento o diagnóstico realizado.
-```{r fig.width=6, fig.height=6, fig.align='center'}
+
+![Estrategia de gating](images/FC_2.png)
+
+La tabla de resultados muestra el porcentaje de células que pertenecen a cada una de las poblaciones definidas a través del proceso de gating. Estos porcentajes reflejan la proporción de células dentro del total de eventos analizados que cumplen con los criterios específicos de cada gate.
+
+
+
+```{r  fig.width=6, fig.height=6, fig.align='center', echo=FALSE}
+
+# Establecer una semilla para la reproducibilidad
 set.seed(123)
-n <- 1000
-x1  <- matrix(rnorm(n), ncol = 2)
-x2  <- matrix(rnorm(n, mean = 3, sd = 1.5), ncol = 2)
-x   <- rbind(x1, x2)
-head(x)
-smoothScatter(x, xlab = "x1", ylab = "x2")
-```
 
-You can include code snippets of languages other than R, but note that
-the block header has no curly brackets around the language name.
+# Generar un data frame con porcentajes aleatorios para 8 poblaciones celulares
+# Cada fila representa una muestra
+# Los porcentajes se generan de manera que sumen aproximadamente 100%
 
-```cpp
-// [[Rcpp::export]]
-NumericVector timesTwo(NumericVector x) {
-    return x * 2;
+# Nombres de las poblaciones celulares
+poblaciones <- c("Células T CD4+", "Células T CD8+", "Células B", "Células NK", 
+                 "Monocitos", "Células Dendríticas", "Granulocitos", "Células Madre")
+
+# Crear un data frame vacío
+tabla_resultados <- data.frame(matrix(ncol = length(poblaciones), nrow = 10))
+
+# Asignar nombres a las columnas
+colnames(tabla_resultados) <- poblaciones
+
+# Rellenar la tabla con valores aleatorios
+for (i in 1:nrow(tabla_resultados)) {
+  # Generar 8 porcentajes aleatorios
+  porcentajes <- runif(8, min = 5, max = 20)
+  
+  # Normalizar para que sumen aproximadamente 100%
+  porcentajes <- porcentajes / sum(porcentajes) * 100
+  
+  # Asignar los porcentajes a la fila i
+  tabla_resultados[i, ] <- round(porcentajes, 2)
 }
+
+# Asignar nombres a las filas (Muestra 1, Muestra 2, etc.)
+rownames(tabla_resultados) <- paste("Muestra", 1:10)
 ```
 
-You can also write math expressions, e.g. $Y = X\beta + \epsilon$,
-footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
 
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(iris, 10))
+knitr::kable(tabla_resultados)
 ```
 
-## Stay Tuned
 
-Please visit the [development page](https://github.com/yixuan/prettydoc/) of the 
-`prettydoc` package for latest updates and news. Comments, bug reports and
-pull requests are always welcome.
+## Visualización
+
+La visualización de la tabla generada en el análisis de citometría de flujo permite observar la distribución porcentual de distintas poblaciones celulares a través de múltiples muestras. Esta representación es crucial para identificar patrones y comparaciones entre las muestras, facilitando el análisis de variaciones en la presencia y proporción de células inmunitarias específicas, como células T, células B, y células NK, entre otras ^[ Distribución porcentual de diferentes poblaciones celulares en las muestras analizadas. Los boxplots muestran la variabilidad y la dispersión de los datos para cada población celular, proporcionando una visión clara de la distribución y posibles outliers en el conjunto de datos]. 
+
+```{r, echo=FALSE, warning=FALSE}
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Crear un scatter plot para visualizar Células T CD4+ frente a Células T CD8+
+ggplot(tabla_resultados, aes(x = tabla_resultados$`Células T CD4+`, 
+                             y = tabla_resultados$`Células T CD8+`)) +
+  geom_point(color = "blue", size = 3) +
+  labs(title = "Células T CD4+ vs Células T CD8+",
+       x = "Porcentaje de Células T CD4+",
+       y = "Porcentaje de Células T CD8+") +
+  theme_minimal()
+```
+```{r, echo=FALSE, warning=FALSE}
+boxplot(tabla_resultados, col = "orange")
+```
+
+
