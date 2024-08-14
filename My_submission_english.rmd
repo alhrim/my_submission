@@ -1,0 +1,141 @@
+---
+title: "Flow Cytometry"
+author: "David Guillermo Hernández Mejía"
+date: "`r format(Sys.Date(),'%A,%B,%d, %Y')`"
+output:
+  prettydoc::html_pretty:
+    toc: true
+    theme: cayman
+    highlight: github
+---
+```{r setup, include=FALSE}
+# define knitr options
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+
+# set any missing NAs in table to blank
+options(knitr.kable.NA='')
+
+# load R packages
+library(fivethirtyeight)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(ggthemes)
+```
+
+## What is Flow Cytometry?
+
+Flow cytometry is a laboratory technique used to measure the physical and chemical properties of cells or particles in suspension. This technique relies on a system that allows for the individual analysis of cells or other particles as they flow in a liquid stream through a laser beam. As the particles pass through the laser, they scatter light and, if they are labeled with fluorochromes, emit fluorescence. These light events are captured and converted into electrical signals, which are then processed to provide detailed information about each particle
+
+## What is it used for?
+
+
+**Flow cytometry** is particularly useful for::
+
+* _Identification and classification of cell populations_: It allows for the precise characterization of different types of cells based on the expression of specific markers on their surface or inside them.
+* _Evaluation of cell viability_: It determines the percentage of living, dead, or apoptotic cells.
+* _Cell cycle analysis_: It provides information about the different phases of the cell cycle in a cell population.
+* _Detection of intracellular proteins and cytokines_: It assesses the presence and quantity of proteins and molecules important for cell function.
+
+The versatility of flow cytometry makes it an indispensable technique in biomedical research and clinical diagnostics, enabling detailed and quantitative analysis of cellular diversity in complex samples.
+
+## How Does Flow Cytometry Work?
+
+
+Flow cytometry is based on the interaction of cells or particles with an optical system composed of a laser and detectors. The following are the main steps in the functioning of this technique:
+
+* **1.Sample Preparation**:
+The cells or particles to be analyzed are suspended in a fluid. These cells may be previously labeled with specific antibodies conjugated to fluorochromes, which will bind to specific molecules present on the surface or inside the cells..
+
+* **2.Sample Injection**:
+The cell suspension is injected into the flow cytometer, where the cells flow individually through a narrow channel. This flow is laminar and orderly, allowing cells to pass one by one in front of the laser beam.
+
+* **3.Interaction with the Laser**:
+Each cell passing through the laser scatters light at different angles (forward and side scatter). Additionally, if the cell has been labeled with fluorochromes, they will be excited and emit light at a specific wavelength.
+
+![Ilustración de la citometría de flujo](images/FC_1.png)
+
+
+* **4.Detection and Data Collection**:
+Detectors capture both the scattered light and the fluorescence emitted by the cells. Forward scatter (FSC) provides information about cell size, while side scatter (SSC) is related to the internal complexity or granularity of the cell. Different fluorochromes emit fluorescence at specific wavelengths, and their signals are collected by individual detectors.
+
+* **5.Data Analysis**:
+The detected signals are converted into electrical pulses and subsequently digitized. These data are processed to generate graphs such as histograms or dot plots, which allow for the visualization and analysis of different cell populations based on the measured parameters. One of the mathematical calculations used is the mean fluorescence intensity (MFI), which is employed to quantify the expression of specific markers in a cell population. This is calculated as:
+
+$$ MFI= 1/N  \sum_{i=1}^{N} F_i $$
+Where:
+  + 𝑁 𝑁 is the total number of events (cells) analyzed..
+  + $𝐹_i$ is the fluorescence intensity of the event 
+
+## Interpretation
+
+The obtained results can be interpreted to understand the composition of the sample, the expression of specific molecules, and other relevant aspects according to the experiment or diagnosis performed..
+
+![Estrategia de gating](images/FC_2.png)
+
+The results table shows the percentage of cells belonging to each of the populations defined through the gating process. These percentages reflect the proportion of cells within the total analyzed events that meet the specific criteria of each gate.
+
+```{r  fig.width=6, fig.height=6, fig.align='center', echo=FALSE}
+
+# Establecer una semilla para la reproducibilidad
+set.seed(123)
+
+# Generar un data frame con porcentajes aleatorios para 8 poblaciones celulares
+# Cada fila representa una muestra
+# Los porcentajes se generan de manera que sumen aproximadamente 100%
+
+# Nombres de las poblaciones celulares
+poblaciones <- c("CD4+", "CD8+", "LT_B", "NK", "Mo", "DC", "Gran", "STEM")
+
+# Crear un data frame vacío
+tabla_resultados <- data.frame(matrix(ncol = length(poblaciones), nrow = 10))
+
+# Asignar nombres a las columnas
+colnames(tabla_resultados) <- poblaciones
+
+# Rellenar la tabla con valores aleatorios
+for (i in 1:nrow(tabla_resultados)) {
+  # Generar 8 porcentajes aleatorios
+  porcentajes <- runif(8, min = 5, max = 20)
+  
+  # Normalizar para que sumen aproximadamente 100%
+  porcentajes <- porcentajes / sum(porcentajes) * 100
+  
+  # Asignar los porcentajes a la fila i
+  tabla_resultados[i, ] <- round(porcentajes, 2)
+}
+
+# Asignar nombres a las filas (Muestra 1, Muestra 2, etc.)
+rownames(tabla_resultados) <- paste("Sample", 1:10)
+```
+
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(tabla_resultados)
+```
+
+
+## Visualization
+
+The visualization of the generated table in the flow cytometry analysis allows for the observation of the percentage distribution of different cell populations across multiple samples. This representation is crucial for identifying patterns and comparisons among the samples, facilitating the analysis of variations in the presence and proportion of specific immune cells, such as T cells, B cells, and NK cells, among others ^[Distribution of different cell populations percentages across analyzed samples. The boxplots show the variability and dispersion of the data for each cell population, providing a clear view of the distribution and possible outliers in the dataset].
+
+```{r, echo=FALSE, warning=FALSE}
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Crear un scatter plot para visualizar Células T CD4+ frente a Células T CD8+
+ggplot(tabla_resultados, aes(x = tabla_resultados$`CD4+`, 
+                             y = tabla_resultados$`CD8+`)) +
+  geom_point(color = "blue", size = 3) +
+  labs(title = "Células T CD4+ vs Células T CD8+",
+       x = "Porcentaje de Células T CD4+",
+       y = "Porcentaje de Células T CD8+") +
+  theme_minimal()
+```
+```{r, echo=FALSE, warning=FALSE}
+boxplot(tabla_resultados, col = "orange")
+```
+
+

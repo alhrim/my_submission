@@ -4,6 +4,7 @@ author: "David Guillermo Hernández Mejía"
 date: "`r format(Sys.Date(),'%A,%B,%d, %Y')`"
 output:
   prettydoc::html_pretty:
+    toc: true
     theme: cayman
     highlight: github
 ---
@@ -65,7 +66,7 @@ Donde:
   + 𝑁 es el número total de eventos (células) analizados.
   + $𝐹_i$ es la intensidad de fluorescencia del evento 
 
-## **Interpretación**
+## Interpretación
 
 Los resultados obtenidos pueden ser interpretados para entender la composición de la muestra, la expresión de moléculas específicas, y otros aspectos relevantes según el experimento o diagnóstico realizado.
 
