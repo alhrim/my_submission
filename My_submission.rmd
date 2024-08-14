@@ -1,0 +1,84 @@
+---
+title: "Citometría de flujo"
+author: "David Guillermo Hernández Mejía"
+date: "`r format(Sys.Date(),'%A,%B,%d, %Y')`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+## ¿Qué es la Citometría de Flujo?
+
+La citometría de flujo es una técnica de laboratorio utilizada para medir las propiedades físicas y químicas de las células o partículas en suspensión. Esta técnica se basa en el uso de un sistema que permite analizar individualmente células u otras partículas, mientras estas fluyen en una corriente líquida a través de un haz de luz láser. Al atravesar el láser, las partículas dispersan la luz y, si están marcadas con fluorocromos, emiten fluorescencia. Estos eventos de luz son capturados y convertidos en señales eléctricas, que luego son procesadas para proporcionar información detallada sobre cada partícula.
+
+## ¿Para qué sirve?
+
+La **citometría de flujo** es especialmente útil para:
+
+* _Identificación y clasificación de poblaciones celulares_: Permite la caracterización precisa de diferentes tipos de células en función de la expresión de marcadores específicos en su superficie o en su interior.
+* _Evaluación de la viabilidad celular_: Determina el porcentaje de células vivas, muertas o en proceso de apoptosis.
+* _Análisis del ciclo celular_: Proporciona información sobre las diferentes fases del ciclo celular en una población celular.
+* _Detección de proteínas intracelulares y citocinas_: Evalúa la presencia y cantidad de proteínas y moléculas importantes para la función celular.
+
+La versatilidad de la citometría de flujo la convierte en una técnica indispensable en la investigación biomédica y en el diagnóstico clínico, permitiendo un análisis detallado y cuantitativo de la diversidad celular en muestras complejas.
+
+## ¿Cómo Funciona la Citometría de Flujo?
+
+
+La citometría de flujo se basa en la interacción de células o partículas con un sistema óptico compuesto por un láser y detectores. A continuación, se describen los pasos principales en el funcionamiento de esta técnica:
+
+* **1.Preparación de la Muestra**:
+Las células o partículas a analizar se suspenden en un fluido. Estas células pueden estar previamente marcadas con anticuerpos específicos conjugados a fluorocromos, que se unirán a moléculas específicas presentes en la superficie o en el interior de las células.
+
+* **Inyección de la Muestra**:
+La suspensión celular es inyectada en el citómetro de flujo, donde las células fluyen individualmente a través de un canal estrecho. Este flujo es laminar y ordenado, permitiendo que las células pasen una por una frente al haz de láser.
+
+* **Interacción con el Láser**:
+Cada célula que pasa por el láser dispersa la luz en diferentes ángulos (dispersión hacia adelante y lateral). Además, si la célula ha sido marcada con fluorocromos, estos se excitan y emiten luz a una longitud de onda específica.
+
+![Ilustración de la citometría de flujo](images/FC_1.png)
+<div style="text-align: center;">
+  <img src="images/FC_1.png" alt="Ilustración de la citometría de flujo" width="70%">
+</div>
+
+Detección y Recopilación de Datos:
+Los detectores captan tanto la luz dispersa como la fluorescencia emitida por las células. La dispersión hacia adelante (FSC) proporciona información sobre el tamaño celular, mientras que la dispersión lateral (SSC) está relacionada con la complejidad interna o granularidad de la célula. Los diferentes fluorocromos emiten fluorescencia en longitudes de onda específicas, y sus señales son recogidas por detectores individuales.
+
+Análisis de Datos:
+Las señales detectadas son convertidas en impulsos eléctricos y posteriormente digitalizadas. Estos datos se procesan para generar gráficos como histogramas o diagramas de puntos, que permiten la visualización y análisis de las diferentes poblaciones celulares en función de los parámetros medidos.
+
+Interpretación:
+Los resultados obtenidos pueden ser interpretados para entender la composición de la muestra, la expresión de moléculas específicas, y otros aspectos relevantes según el experimento o diagnóstico realizado.
+```{r fig.width=6, fig.height=6, fig.align='center'}
+set.seed(123)
+n <- 1000
+x1  <- matrix(rnorm(n), ncol = 2)
+x2  <- matrix(rnorm(n, mean = 3, sd = 1.5), ncol = 2)
+x   <- rbind(x1, x2)
+head(x)
+smoothScatter(x, xlab = "x1", ylab = "x2")
+```
+
+You can include code snippets of languages other than R, but note that
+the block header has no curly brackets around the language name.
+
+```cpp
+// [[Rcpp::export]]
+NumericVector timesTwo(NumericVector x) {
+    return x * 2;
+}
+```
+
+You can also write math expressions, e.g. $Y = X\beta + \epsilon$,
+footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(iris, 10))
+```
+
+## Stay Tuned
+
+Please visit the [development page](https://github.com/yixuan/prettydoc/) of the 
+`prettydoc` package for latest updates and news. Comments, bug reports and
+pull requests are always welcome.
